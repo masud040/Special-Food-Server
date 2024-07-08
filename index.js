@@ -6,24 +6,18 @@ const { MongoClient, ObjectId, ServerApiVersion } = require("mongodb");
 const app = express();
 const port = process.env.PORT || 5000;
 app.use(express.json());
-app.use(
-  cors({
-    origin: [
-      "http://localhost:5173",
-      "http://localhost:5174",
-      "https://rad-griffin-e8685a.netlify.app"
-    ],
-    credentials: true,
-  })
-);
+app.use(cors());
 
-const client = new MongoClient(process.env.DB_URI, {
-  serverApi: {
-    version: ServerApiVersion.v1,
-    strict: true,
-    deprecationErrors: true,
-  },
-});
+const client = new MongoClient(
+  "mongodb+srv://masud040:g90gZmWVegUML1mm@cluster0.67wwbir.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0",
+  {
+    serverApi: {
+      version: ServerApiVersion.v1,
+      strict: true,
+      deprecationErrors: true,
+    },
+  }
+);
 const menuCollection = client.db("bistroDB").collection("menu");
 const cartCollection = client.db("bistroDB").collection("carts");
 const reviewCollection = client.db("bistroDB").collection("reviews");
@@ -58,7 +52,7 @@ const verifyAdmin = async (req, res, next) => {
 
 async function run() {
   try {
-    // await client.connect();
+    await client.connect();
 
     // jwt related
     app.post("/jwt", async (req, res) => {
@@ -180,10 +174,10 @@ async function run() {
       const result = await reviewCollection.find().toArray();
       res.send(result);
     });
-    // await client.db("admin").command({ ping: 1 });
-    // console.log(
-    //   "Pinged your deployment. You successfully connected to MongoDB!"
-    // );
+    await client.db("admin").command({ ping: 1 });
+    console.log(
+      "Pinged your deployment. You successfully connected to MongoDB!"
+    );
   } finally {
     //   await client.close();
   }
@@ -193,6 +187,7 @@ run().catch(console.dir);
 app.get("/", (req, res) => {
   res.send("bistro boss server is running");
 });
+
 app.listen(port, () => {
   console.log(`server is running on ${port}`);
 });
