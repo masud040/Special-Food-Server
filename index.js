@@ -6,7 +6,16 @@ const { MongoClient, ObjectId, ServerApiVersion } = require("mongodb");
 const app = express();
 const port = process.env.PORT || 5000;
 app.use(express.json());
-app.use(cors());
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173",
+      "http://localhost:5174",
+      "https://rad-griffin-e8685a.netlify.app"
+    ],
+    credentials: true,
+  })
+);
 
 const client = new MongoClient(process.env.DB_URI, {
   serverApi: {
